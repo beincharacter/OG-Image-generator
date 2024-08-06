@@ -5,6 +5,7 @@ import 'react-quill/dist/quill.snow.css';
 import icon from '../assets/react.svg';
 import './PostPage.css';
 import { Notification } from './Notification';
+import { useNavigate } from 'react-router-dom';
 
 export function PostPage() {
     const [title, setTitle] = useState('');
@@ -15,6 +16,7 @@ export function PostPage() {
     const [isImageVisible, setIsImageVisible] = useState(false);
     const [notification, setNotification] = useState({ message: '', type: '', show: false });
     const postRef = useRef(null);
+    const navigate = useNavigate();
 
     const handleImageUpload = (e) => {
         const file = e.target.files[0];
@@ -88,11 +90,19 @@ export function PostPage() {
     };
 
     // Function to view the generated image in a new tab
+    // const viewImage = () => {
+    //     if (ogImageUrl) {
+    //         window.open(ogImageUrl, '_blank');
+    //     }
+    // };
+
     const viewImage = () => {
-        if (ogImageUrl) {
-            window.open(ogImageUrl, '_blank');
+        if(ogImageUrl) {
+            const encodedUrl = encodeURIComponent(ogImageUrl);
+            console.log({encodedUrl});
+            navigate(`/og/${encodedUrl}`);
         }
-    };
+    }
 
     return (
         <div className="p-4 h-full">
