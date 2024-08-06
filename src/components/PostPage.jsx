@@ -1,4 +1,4 @@
-import React, { useState, useRef } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import html2canvas from 'html2canvas';
 import ReactQuill from 'react-quill';
 import 'react-quill/dist/quill.snow.css';
@@ -23,6 +23,7 @@ export function PostPage() {
         }
     };
 
+    // Function to generate OG image
     const generateOGImage = async () => {
         if (!title && !content && !image) {
             triggerNotification("Please fill in all fields before generating the image.", "error");
@@ -42,6 +43,10 @@ export function PostPage() {
             setOgImageUrl(dataUrl);
             setIsImageVisible(true);
             triggerNotification("OG Image generated successfully.", "success");
+
+            // Update the OG meta tag with the generated image URL
+            updateMetaTag(dataUrl);
+
         } catch (error) {
             console.error('Failed to generate OG image:', error);
             triggerNotification("Failed to generate OG image.", "error");
@@ -50,6 +55,18 @@ export function PostPage() {
         }
     };
 
+    // Function to update or create the og:image meta tag
+    const updateMetaTag = (imageUrl) => {
+        let metaTag = document.querySelector('meta[property="og:image"]');
+        if (!metaTag) {
+            metaTag = document.createElement('meta');
+            metaTag.setAttribute('property', 'og:image');
+            document.head.appendChild(metaTag);
+        }
+        metaTag.setAttribute('content', imageUrl);
+    };
+
+    // Function to trigger notifications
     const triggerNotification = (message, type) => {
         setNotification({ message, type, show: true });
         setTimeout(() => {
@@ -57,6 +74,7 @@ export function PostPage() {
         }, 3000);
     };
 
+    // Function to download the generated image
     const downloadImage = () => {
         if (ogImageUrl) {
             const link = document.createElement('a');
@@ -65,6 +83,14 @@ export function PostPage() {
             document.body.appendChild(link);
             link.click();
             document.body.removeChild(link);
+            triggerNotification("Image downloaded successfully", "success");
+        }
+    };
+
+    // Function to view the generated image in a new tab
+    const viewImage = () => {
+        if (ogImageUrl) {
+            window.open(ogImageUrl, '_blank');
         }
     };
 
@@ -101,7 +127,7 @@ export function PostPage() {
                             <ReactQuill
                                 value={content}
                                 onChange={setContent}
-                                className="p-2 border rounded"
+                                className="p-2 border rounded quill-editor"
                             />
                             <input
                                 type="file"
@@ -134,6 +160,12 @@ export function PostPage() {
                         className="mb-4 px-4 py-2 bg-green-500 text-white rounded self-end absolute top-[10px] right-[10px] z-10"
                     >
                         Download
+                    </button>
+                    <button
+                        onClick={viewImage}
+                        className="mb-4 px-4 py-2 bg-blue-500 text-white rounded self-end absolute top-[10px] right-[120px] z-10"
+                    >
+                        View
                     </button>
                     <img src={ogImageUrl} alt="Generated OG" className="border rounded shadow-md max-w-full h-auto w-full" />
                     <div className="absolute bottom-0 left-0 right-0 h-12 bg-gradient-to-t from-black to-transparent"></div>

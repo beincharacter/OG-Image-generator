@@ -10,7 +10,7 @@
 
 .notification {
   position: fixed;
-  top: 20px;
+  top: 50px;
   right: 20px;
   padding: 10px 20px;
   background-color: #333;
@@ -33,14 +33,17 @@
 }
 
 .notification.success {
+  opacity: 1;
   background-color: #4CAF50;
 }
 
 .notification.error {
+  opacity: 1;
   background-color: #F44336;
 }
 
 .notification.info {
+  opacity: 1;
   background-color: #2196F3;
 }
 
